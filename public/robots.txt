@@ -1,0 +1,12 @@
+# public/robots.txt
+# Replace YOUR-SITE-DOMAIN with the real frontend domain (Render Static Site URL or custom domain).
+#
+# The admin area is intentionally NOT listed here: robots.txt is public, so listing it would
+# reveal its address, and blocking crawlers would also stop them from reading its "noindex" tag.
+# Admin pages are excluded from search engines with <meta name="robots" content="noindex, nofollow">.
+# Reminder: an obscure URL is NOT security. Real protection is login + roles + backend checks.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://YOUR-SITE-DOMAIN/sitemap.xml
