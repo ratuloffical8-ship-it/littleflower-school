@@ -1,0 +1,32 @@
+// firebase/storage.rules
+rules_version = '2';
+
+/**
+ * FIREBASE STORAGE SECURITY RULES
+ *
+ *  - public/**  : readable by anyone (published gallery and notice images only).
+ *                 Nobody can write here from the browser.
+ *  - everything else (private/**: admission documents, birth certificates, student photos,
+ *    payment screenshots): NO client reads and NO client writes.
+ *
+ * Uploads and downloads of private files use short-lived SIGNED URLs created by the backend
+ * after validation (uploads) or after a role check that is written to auditLogs (downloads).
+ * Signed URLs are issued with the Admin SDK and are not limited by these rules.
+ *
+ * Do not publish student photos in public/** without written guardian permission.
+ *
+ * DEPLOY: firebase deploy --only storage
+ */
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    match /public/{allPaths=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
