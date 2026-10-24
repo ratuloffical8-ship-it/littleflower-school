@@ -4,6 +4,8 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 
 import App from './App';
+// Starts Firebase App Check and attaches its token to every API request
+import './lib/firebase/appCheck';
 import './styles/index.css';
 
 const rootElement = document.getElementById('root');
