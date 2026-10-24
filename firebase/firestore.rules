@@ -1,0 +1,56 @@
+// firebase/firestore.rules
+rules_version = '2';
+
+/**
+ * FIRESTORE SECURITY RULES
+ *
+ * 1) The browser may READ only public, published content:
+ *      notices, gallery, faqs  (only documents with status == 'published')
+ *      schoolSettings/public   (the one public settings document)
+ * 2) Every other collection has NO client access at all (students, guardians, applications,
+ *    invoices, payments, results, admins, auditLogs, ...). The admin panel reads and writes
+ *    those through the backend API, which verifies login, role claim and the active admins
+ *    document before using the Admin SDK (the Admin SDK is not limited by these rules).
+ * 3) ALL client WRITES are denied. Every write goes through the backend API.
+ *
+ * Anything stored in a published notice, gallery item or FAQ is public to the whole internet:
+ * never put private information in those documents.
+ *
+ * DEPLOY THESE RULES BEFORE ACCEPTING ANY REAL STUDENT DATA:
+ *   firebase deploy --only firestore:rules,firestore:indexes
+ */
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isPublished() {
+      return resource != null && resource.data.status == 'published';
+    }
+
+    match /notices/{noticeId} {
+      allow get, list: if isPublished();
+      allow write: if false;
+    }
+
+    match /gallery/{itemId} {
+      allow get, list: if isPublished();
+      allow write: if false;
+    }
+
+    match /faqs/{faqId} {
+      allow get, list: if isPublished();
+      allow write: if false;
+    }
+
+    // Only the document named "public" can be read, and it cannot be listed.
+    match /schoolSettings/{settingsId} {
+      allow get: if settingsId == 'public';
+      allow list: if false;
+      allow write: if false;
+    }
+
+    // Default: deny everything else, for everyone (including logged-in users and admins).
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
